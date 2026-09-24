@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gönderide Sorun · Yeni Talep · Zemlog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/proto.css">
+<style>
+/* ---------- Gönderi sorunu sihirbazı ---------- */
+.page-head .page-title{font-size:20px}
+.page-sub{font-size:13px;color:var(--muted);margin:0}
+.wiz{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:24px;align-items:start}
+
+/* Durumunuz */
+.status{padding:18px 20px;margin-bottom:16px}
+.status h3{margin:0 0 12px;font-size:14px;font-weight:600;color:var(--heading)}
+.st-row{display:flex;align-items:center;gap:10px;background:var(--gray-100);border-radius:8px;padding:9px 12px;font-size:13px;margin-bottom:8px}
+.st-row:last-child{margin-bottom:0}
+.st-row .ic{width:16px;height:16px;color:var(--heading)}
+.st-tag{font-size:11px;font-weight:600;color:var(--muted);background:#fff;border:1px solid var(--gray-200);border-radius:4px;padding:1px 5px;line-height:1.4}
+.st-row .txt{flex:1;min-width:0;color:var(--foreground)}
+.st-row .txt b{color:var(--heading);font-weight:600}
+.st-row a{font-size:12px;color:var(--heading);text-decoration:underline;white-space:nowrap}
+
+/* Adımlar */
+.steps{padding:4px 0}
+.step{border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:0}
+.step-head{display:flex;align-items:center;gap:12px;width:100%;padding:14px 20px;text-align:left}
+.step.locked .step-head{cursor:default}
+.step-num{width:24px;height:24px;border-radius:50%;border:1px solid var(--gray-300);color:var(--muted);font-size:12px;font-weight:600;display:grid;place-items:center;flex-shrink:0;background:#fff}
+.step.open .step-num{background:var(--primary-500);border-color:var(--primary-500);color:#fff}
+.step.done .step-num{background:var(--success-100);border-color:var(--success-100);color:var(--success-900)}
+.step-num .ic{width:14px;height:14px}
+.step-title{display:block;font-size:14px;font-weight:600;color:var(--heading)}
+.step-sub{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.step-sub:empty{display:none}
+.step-head .chev{margin-left:auto;width:18px;height:18px;color:var(--muted);transition:transform .2s;flex-shrink:0}
+.step.open .chev{transform:rotate(180deg)}
+.step-body{display:none;padding:0 20px 18px}
+.step.open .step-body{display:block}
+.desc{font-size:13px;color:var(--foreground);margin:0 0 12px;line-height:1.5}
+.step-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}
+.btn-sm .ic{width:16px;height:16px}
+
+/* Adım 1 */
+.search-row{display:flex;gap:8px;margin-bottom:12px}
+.search-row .wrap{position:relative;flex:1;min-width:0}
+.search-row input{width:100%;height:38px;border:1px solid var(--gray-200);border-radius:8px;padding:0 34px 0 12px;font-size:13px;outline:none;transition:border-color .15s,box-shadow .15s}
+.search-row input::placeholder{color:var(--placeholder)}
+.search-row input:focus{border-color:var(--primary-300);box-shadow:0 0 0 3px rgba(58,152,188,.16)}
+.search-row .ok{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--success-500)}
+.btn-found{background:var(--success-100);color:var(--success-900)}
+.btn-found:hover{background:var(--success-100)}
+.empty-box{border:1px solid var(--gray-200);border-radius:10px;padding:36px 16px;text-align:center;margin-bottom:12px}
+.empty-box .ic{width:30px;height:30px;color:var(--heading)}
+.empty-box b{display:block;font-size:13px;color:var(--heading);margin-top:8px}
+.empty-box span{font-size:12px;color:var(--muted)}
+.pkg-box{background:var(--gray-100);border-radius:10px;padding:14px;margin-bottom:12px}
+.pkg-box h4{margin:0 0 10px;font-size:13px;font-weight:600;color:var(--heading)}
+.pkg{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--gray-200);border-radius:8px;padding:9px 12px;font-size:13px;margin-bottom:6px;cursor:pointer;color:var(--heading);transition:background .15s,border-color .15s}
+.pkg input{width:16px;height:16px;accent-color:var(--primary-500);margin:0;flex-shrink:0}
+.pkg.on{background:var(--primary-100);border-color:var(--primary-200)}
+.pkg-note{font-size:12px;color:var(--muted);margin-top:6px}
+
+/* Adım 2 */
+.lbl{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;font-weight:600;color:var(--heading);margin:0 0 6px}
+.lbl .cnt{font-weight:400;color:var(--muted);font-size:12px}
+.ta{width:100%;min-height:72px;border:1px solid var(--gray-200);border-radius:8px;padding:10px 12px;font-size:13px;outline:none;resize:vertical;margin-bottom:12px;line-height:1.5;transition:border-color .15s,box-shadow .15s}
+.ta::placeholder{color:var(--placeholder)}
+.ta:focus{border-color:var(--primary-300);box-shadow:0 0 0 3px rgba(58,152,188,.16)}
+
+/* Adım 3 */
+.warn{display:flex;align-items:center;gap:8px;background:var(--warning-100);color:#d95900;border-radius:8px;padding:10px 12px;font-size:13px;margin-bottom:12px}
+.warn .ic{width:16px;height:16px;flex-shrink:0}
+.drop{border:1px dashed var(--gray-300);border-radius:10px;padding:22px;text-align:center;cursor:pointer;margin-bottom:6px;background:var(--gray-100);transition:background .15s,border-color .15s}
+.drop:hover,.drop.over{border-color:var(--primary-300);background:var(--primary-100)}
+.drop .ic{width:22px;height:22px;color:var(--heading)}
+.drop p{margin:6px 0 0;font-size:12px;color:var(--muted)}
+.drop p b{color:var(--heading);font-weight:600}
+.frow{display:flex;align-items:center;gap:8px;padding:9px 4px;border-bottom:1px solid var(--border);font-size:13px}
+.frow:last-of-type{border-bottom:0}
+.frow .n{color:var(--heading);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.frow .s{color:var(--muted);font-size:12px;white-space:nowrap}
+.frow a{margin-left:auto;font-size:12px;color:var(--heading);text-decoration:underline;white-space:nowrap}
+.flist{margin-bottom:12px}
+
+/* Adım 4 */
+.f-lbl{font-size:13px;font-weight:600;color:var(--heading);margin:0 0 6px}
+.f-lbl .req{color:var(--danger-500)}
+.val{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--gray-100);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--heading);margin-bottom:12px}
+.val .m{color:var(--muted);font-size:12px;margin-left:6px}
+.val a{font-size:12px;text-decoration:underline;color:var(--heading);white-space:nowrap}
+.val.edit{padding:0;background:transparent}
+.val.edit input{width:100%;height:38px;border:1px solid var(--primary-300);border-radius:8px;padding:0 12px;font-size:13px;outline:none;box-shadow:0 0 0 3px rgba(58,152,188,.16)}
+.addr{white-space:pre-line;background:var(--gray-100);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--heading);margin-bottom:12px;line-height:1.5}
+.confirm{display:flex;align-items:flex-start;gap:8px;background:var(--primary-100);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--heading);margin-bottom:12px;cursor:pointer;line-height:1.45}
+.confirm input{width:16px;height:16px;accent-color:var(--primary-500);margin:2px 0 0;flex-shrink:0}
+
+/* Başarı */
+.success-wrap{padding:20px}
+.success{background:#e9f9ef;border-radius:10px;padding:24px 20px}
+.ok-title{display:flex;align-items:center;gap:14px;font-size:20px;font-weight:600;color:var(--success-500);margin-bottom:14px}
+.ok-ico{width:38px;height:38px;border-radius:50%;background:#fff;display:grid;place-items:center;flex-shrink:0}
+.ok-ico .ic{width:24px;height:24px;color:var(--success-500);stroke-width:2.5}
+.success p{margin:0 0 12px;font-size:13px;color:var(--foreground);line-height:1.55}
+.success p b{color:var(--heading)}
+.note-warn{background:#f1e6c8;border:1px solid #e3cf9a;border-radius:6px;padding:8px 10px;font-size:12px;color:#5a4a1f;margin-bottom:24px;line-height:1.5}
+.note-warn b{font-weight:600}
+.btn-success{background:var(--success-500);color:#fff}
+.btn-success:hover{background:#00b549}
+
+/* Sağ paneller */
+.side{display:flex;flex-direction:column;gap:16px}
+.side .card{padding:18px 20px}
+.side h3{margin:0 0 8px;font-size:14px;font-weight:600;color:var(--heading)}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:8px 0;font-size:13px;border-bottom:1px solid var(--border)}
+.kv:last-child{border-bottom:0}
+.kv .k{color:var(--muted)}
+.kv .v{color:var(--heading);font-weight:500;text-align:right}
+.big{display:flex;align-items:baseline;gap:6px;margin:4px 0 8px}
+.big b{font-size:28px;font-weight:600;color:var(--heading);line-height:1}
+.big span{font-size:13px;color:var(--muted)}
+.bar{height:8px;border-radius:999px;background:#fdeceb;overflow:hidden;margin:12px 0 18px}
+.bar i{display:block;height:100%;background:#f4632a;border-radius:999px}
+.alert{display:flex;gap:8px;background:var(--danger-100);color:#c9232b;border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.45}
+.alert .ic{width:16px;height:16px;flex-shrink:0;margin-top:1px;color:var(--danger-500)}
+.ev-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.ev-head h3{margin:0}
+.ev{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--foreground);padding:5px 0}
+.ev .ic{width:16px;height:16px;color:var(--gray-400)}
+.ev.on .ic{color:#fff;fill:var(--success-500);stroke:#fff;width:18px;height:18px}
+.ev .r{margin-left:auto;color:var(--muted);font-size:12px}
+
+@media (max-width:1100px){.wiz{grid-template-columns:1fr}}
+@media (max-width:767px){.search-row{flex-direction:column}.step-head{padding:12px 16px}.step-body{padding:0 16px 16px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="header" id="header"></header>
+
+    <main class="content">
+      <div class="page-head">
+        <div style="min-width:0">
+          <h1 class="page-title">Talebinizi birlikte tamamlayalım</h1>
+          <p class="page-sub">Durumunuzu anladık. Dosyanızı eksiksiz iletebilmemiz için aşağıdaki bilgileri paylaşın.</p>
+        </div>
+        <a class="btn btn-secondary" href="destek-taleplerim.html"><i data-icon="arrow-left"></i>Talep Listesine Dön</a>
+      </div>
+
+      <div class="wiz">
+        <div id="left"></div>
+        <div class="side" id="side"></div>
+      </div>
+    </main>
+
+    <footer class="site-foot">© 2026, <a href="#">Zemlog</a> Tüm hakları saklıdır.</footer>
+  </div>
+</div>
+<input type="file" id="fileIn" multiple hidden accept=".pdf,.jpg,.jpeg,.png">
+
+<script src="assets/proto.js"></script>
+<script>
+(() => {
+'use strict';
+const P = window.Proto;
+const { $, $$, esc, icon, tickets, D } = P;
+P.renderShell('support');
+
+/* ---------------- Girdi: S1/S2 cevapları ---------------- */
+const q = new URLSearchParams(location.search);
+const S1 = { evet: 'Evet, ulaştı', hayir: 'Hayır, ulaşmadı' };
+const S2 = { hasar: 'Paket veya ürün hasarlı', eksik: 'Eksik çıktı', yanlis: 'Yanlış ürün veya paket', gecikme: 'Teslim edilmedi / gecikti', kayip: 'Kayıp görünüyor' };
+const s1 = S1[q.get('s1')] ? q.get('s1') : null;
+const s2 = S2[q.get('s2')] ? q.get('s2') : null;
+
+/* ---------------- Durum ---------------- */
+const state = {
+  step: 1, reached: 1, done: { 1: false, 2: false, 3: false, 4: false },
+  tracking: '', ship: null, pkgs: new Set(),
+  cond: '', product: '',
+  files: [],
+  name: 'Zemlog Teknoloji A.Ş.', phone: '+90 538 234 50 32', address: '482 Glenbrook Rd.\nStamford, CT 06906\nUnited States',
+  editName: false, editPhone: false, confirmed: false,
+  submitted: null
+};
+
+const today = Date.now();
+const fmtD = t => P.fmtDate(t).slice(0, 10);
+const cap = s => s.charAt(0) + s.slice(1).toLocaleLowerCase('tr');
+/* mock gönderi sorgusu: takip no ≥ 6 karakter ise bulunur; açık taleplerdeki gönderiyle eşleşirse rotası kullanılır */
+const lookup = raw => {
+  const no = raw.trim().toUpperCase().replace(/\s+/g, '');
+  if (no.length < 6) return null;
+  const known = tickets.map(t => t.shipment).find(s => s && (s.tracking === no || s.id === no));
+  const base = no.slice(0, no.length - 3);
+  return {
+    tracking: no,
+    route: known ? `${cap(known.from.city)} → ${cap(known.to.city)}` : 'İstanbul → Stamford, CT',
+    service: 'UPS Worldwide Expedited',
+    planned: fmtD(today - 5 * D), noticed: fmtD(today),
+    packages: ['017', '028', '024', '021'].map(sfx => base + sfx),
+    declared: '1.840,00 USD', daysLeft: 1, pct: 45,
+    from: known ? known.from : { name: 'ZEMLOG', country: 'TR', city: 'İSTANBUL' },
+    to: known ? known.to : { name: 'ZEMLOG TEKNOLOJİ A.Ş.', country: 'US', city: 'STAMFORD' }
+  };
+};
+const isImg = n => /\.(jpe?g|png)$/i.test(n);
+const imgCount = () => state.files.filter(isImg).length;
+const evidence = () => ({ info: state.done[2], photos: imgCount() >= 3, recipient: state.done[4] });
+
+/* ---------------- Sol sütun ---------------- */
+const statusHtml = () => !(s1 && s2) ? '' : `
+  <section class="card status">
+    <h3>Durumunuz</h3>
+    <div class="st-row">${icon('package')}<span class="txt">Gönderide bir sorun var</span><a href="destek-talep-olustur.html">Değiştir</a></div>
+    <div class="st-row"><span class="st-tag">S1</span><span class="txt">Gönderi ulaştı mı? — <b>${S1[s1]}</b></span><a href="destek-talep-olustur.html?konu=shipment&s1=${s1}&s2=${s2}">Değiştir</a></div>
+    <div class="st-row"><span class="st-tag">S2</span><span class="txt">Sorun ne? — <b>${S2[s2]}</b></span><a href="destek-talep-olustur.html?konu=shipment&s1=${s1}&s2=${s2}">Değiştir</a></div>
+  </section>`;
+
+const stepHead = (n, title, sub) => `<button type="button" class="step-head" data-open="${n}"><span class="step-num">${state.done[n] ? icon('check') : n}</span><span style="min-width:0"><span class="step-title">${title}</span><span class="step-sub">${sub}</span></span>${icon('chevron-down', 'ic chev')}</button>`;
+const stepWrap = (n, title, sub, body) => `<div class="step ${state.step === n ? 'open' : ''} ${state.done[n] ? 'done' : ''} ${n > state.reached ? 'locked' : ''}">${stepHead(n, title, state.step === n ? '' : sub)}<div class="step-body">${body}</div></div>`;
+const nextBtn = (n, ok, label = 'Devam et') => `<div class="step-foot"><button type="button" class="btn btn-secondary btn-sm" data-next="${n}" ${ok ? '' : 'disabled'}>${label}${icon('arrow-right')}</button></div>`;
+
+const step1Body = () => {
+  const s = state.ship;
+  return `
+    <p class="desc">Takip numarası girdiğinizde; alıcı, rota, beyan değeri, kalan bildirim süresi gibi gönderi detaylarınız listelenir.</p>
+    <form class="search-row" id="findForm">
+      <span class="wrap"><input id="trk" placeholder="Lütfen takip numarası ile arama yapın." value="${esc(state.tracking)}" autocomplete="off">${s ? icon('check', 'ic ok') : ''}</span>
+      <button type="submit" class="btn btn-sm ${s ? 'btn-found' : 'btn-light'}">${s ? 'Gönderi Bulundu' : 'Gönderiyi Bulun'}</button>
+    </form>
+    ${s ? `<div class="pkg-box">
+      <h4>Bu gönderide ${s.packages.length} paket var. Sorun hangi paketlerde?</h4>
+      ${s.packages.map(p => `<label class="pkg ${state.pkgs.has(p) ? 'on' : ''}"><input type="checkbox" data-pkg="${esc(p)}" ${state.pkgs.has(p) ? 'checked' : ''}>${esc(p)}</label>`).join('')}
+      <div class="pkg-note">Araştırma paket bazında yapılıyor, lütfen sorunlu paketleri seçin.</div>
+    </div>` : `<div class="empty-box">${icon('package')}<b>Liste Boş</b><span>Henüz bir gönderi aramadınız</span></div>`}
+    ${nextBtn(1, s && state.pkgs.size > 0)}`;
+};
+
+const step2Body = () => `
+  <div class="lbl"><span>Paket ne durumda?</span><span class="cnt"><span id="condCnt">${state.cond.length}</span> / 254</span></div>
+  <textarea class="ta" id="cond" maxlength="254" placeholder="Örn. Alıcı paketi teslim aldı, üç paketin köşeleri ezilmiş ve bant yeniden yapıştırılmış…">${esc(state.cond)}</textarea>
+  <div class="lbl"><span>Ürün Bilgisi</span><span class="cnt"><span id="prodCnt">${state.product.length}</span> / 254</span></div>
+  <textarea class="ta" id="product" maxlength="254" placeholder="Örn. 12 çift el yapımı deri ayakkabı, model ZM-22431, 40-44 numara. Her çift kendi kutusunda.">${esc(state.product)}</textarea>
+  ${nextBtn(2, state.cond.trim().length > 0 && state.product.trim().length > 0)}`;
+
+const step3Body = () => `
+  <p class="desc">Gönderinin içeriğini ve fotoğraflarını eksiksiz yükleyin. Bu dosyaları doğrudan taşıyıcıya iletiyoruz; eksik olursa talebiniz reddedilebilir.</p>
+  <div class="warn">${icon('alert-circle')}<span><b>Uyarı :</b> Gönderinin ambalajını ve iç dolgusunu saklayın.</span></div>
+  <div class="drop" id="drop">${icon('upload')}<p><b>Belge ve fotoğrafları yükleyin</b> · PDF, JPG, PNG (Maks. 10MB)</p></div>
+  <div class="flist">${state.files.map((f, i) => `<div class="frow"><span class="n">${esc(f)}</span><span class="s">· yüklendi</span><a href="#" data-rm="${i}">Kaldır</a></div>`).join('')}</div>
+  ${nextBtn(3, true)}`;
+
+const step4Body = () => `
+  <p class="desc">Servisler araştırma sırasında alıcıyı kendisi arıyor. Ulaşılamayan numarada dosya kapanıyor.</p>
+  <div class="f-lbl">Alıcı Adı <span class="req">*</span></div>
+  ${state.editName ? `<div class="val edit"><input id="nameIn" value="${esc(state.name)}"></div>` : `<div class="val"><span>${esc(state.name)}</span><a href="#" data-edit="name">Değiştir</a></div>`}
+  <div class="f-lbl">Telefon Numarası <span class="req">*</span></div>
+  ${state.editPhone ? `<div class="val edit"><input id="phoneIn" value="${esc(state.phone)}"></div>` : `<div class="val"><span>${esc(state.phone)}<span class="m">· TR</span></span><a href="#" data-edit="phone">Değiştir</a></div>`}
+  <div class="f-lbl">Adres Bilgisi</div>
+  <div class="addr">${esc(state.address)}</div>
+  <label class="confirm"><input type="checkbox" id="confirm" ${state.confirmed ? 'checked' : ''}><span>Bu adres ve numaranın güncel olduğunu, alıcıya buradan ulaşılabildiğini teyit ediyorum.</span></label>
+  ${nextBtn(4, state.confirmed && state.name.trim() && state.phone.trim(), 'Talebi Gönder')}`;
+
+const stepsHtml = () => `
+  <section class="card steps">
+    ${stepWrap(1, 'Takip Numarası', state.done[1] ? `${state.pkgs.size} paket seçildi` : 'Bekliyor', step1Body())}
+    ${stepWrap(2, 'Durum ve gönderi bilgisi', state.done[2] ? 'Açıklama girildi' : 'Bekliyor', step2Body())}
+    ${stepWrap(3, 'Hasar kanıtı', state.done[3] ? `${state.files.length} dosya eklendi` : 'Bekliyor', step3Body())}
+    ${stepWrap(4, 'Alıcı bilgileri', state.done[4] ? 'Teyit edildi' : 'Bekliyor', step4Body())}
+  </section>`;
+
+const successHtml = () => `
+  <section class="card success-wrap"><div class="success">
+    <div class="ok-title"><span class="ok-ico">${icon('check')}</span>Talebiniz alındı</div>
+    <p>Talep numaranız #DT-${state.submitted.id}. Ekibimiz dosyanızı hazırlıyor; ek bilgi gerekirse panel üzerinden sizinle iletişime geçeceğiz.</p>
+    ${state.submitted.missing ? `<div class="note-warn">Talebiniz <b>eksik belge</b> notuyla açıldı. Eksikler tamamlanana kadar dosya sağlayıcıya iletilemiyor, ancak bildirim süresi işlemeye devam ediyor.</div>` : ''}
+    <a class="btn btn-success" href="destek-taleplerim.html?created=${state.submitted.id}">${icon('arrow-left')}Talep Listesine Dön</a>
+  </div></section>`;
+
+/* ---------------- Sağ sütun ---------------- */
+const sideHtml = () => {
+  const s = state.ship;
+  if (!s) return `<aside class="card open-panel">${P.openPanelHtml()}</aside>`;
+  const e = evidence();
+  const all = e.info && e.photos && e.recipient;
+  const evRow = (on, label, right = '') => `<div class="ev ${on ? 'on' : ''}">${icon(on ? 'check-circle' : 'circle')}<span>${label}</span>${right ? `<span class="r">${right}</span>` : ''}</div>`;
+  return `
+    <section class="card">
+      <h3>Gönderi Özeti</h3>
+      <div class="kv"><span class="k">Rota</span><span class="v">${esc(s.route)}</span></div>
+      <div class="kv"><span class="k">Servis</span><span class="v">${esc(s.service)}</span></div>
+      <div class="kv"><span class="k">Planlanan Teslim</span><span class="v">${s.planned}</span></div>
+      ${state.submitted ? '' : `<div class="kv"><span class="k">Fark Edilme</span><span class="v">${s.noticed}</span></div>`}
+      <div class="kv"><span class="k">Paket</span><span class="v">${s.packages.length}</span></div>
+      <div class="kv"><span class="k">Beyan Değeri</span><span class="v">${s.declared}</span></div>
+    </section>
+    <section class="card">
+      <h3>Bildirim Süresi</h3>
+      <div class="big"><b>${s.daysLeft}</b><span>gün kaldı</span></div>
+      <div class="bar"><i style="width:${s.pct}%"></i></div>
+      <div class="alert">${icon('clock')}<span>Kanıtlar tamamlanmadan talebiniz sağlayıcıya iletilemiyor, ancak bu sayaç durmuyor. Süre, dosya açılmasa bile işlemeye devam ediyor.</span></div>
+    </section>
+    <section class="card">
+      <div class="ev-head"><h3>Kanıt Durumu</h3><span class="chip ${all ? 'success' : 'warning'}">${all ? 'Tamam' : 'Eksik'}</span></div>
+      ${evRow(e.info, 'Durum ve gönderi bilgisi')}
+      ${evRow(e.photos, 'Fotoğraflar', `${Math.min(imgCount(), 3)} / 3`)}
+      ${evRow(e.recipient, 'Alıcı bilgileri')}
+    </section>`;
+};
+
+/* ---------------- Render ---------------- */
+const left = $('#left'), side = $('#side');
+const render = () => {
+  left.innerHTML = state.submitted ? successHtml() : statusHtml() + stepsHtml();
+  side.innerHTML = sideHtml();
+};
+
+/* ---------------- Aksiyonlar ---------------- */
+const find = () => {
+  const s = lookup(state.tracking);
+  if (!s) { P.toast('Gönderi bulunamadı. Takip numarasını kontrol edin.', 'info'); return; }
+  state.ship = s; state.pkgs = new Set();
+  render();
+  P.toast('Gönderi bulundu, sorunlu paketleri seçin.');
+};
+
+const next = n => {
+  if (n === 1 && !(state.ship && state.pkgs.size)) return;
+  if (n === 2 && !(state.cond.trim() && state.product.trim())) return;
+  if (n === 4) { if (!state.confirmed) return; state.done[4] = true; submit(); return; }
+  state.done[n] = true;
+  state.reached = Math.max(state.reached, n + 1);
+  state.step = n + 1;
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+const submit = () => {
+  const e = evidence();
+  const missing = !e.photos;
+  const ship = state.ship;
+  const t = P.createTicket({
+    cat: 'shipment',
+    subject: `${s2 ? S2[s2] : 'Gönderide sorun'} — ${ship.tracking}`,
+    ref: ship.tracking,
+    text: `${state.cond}\n\nÜrün bilgisi: ${state.product}\n\nSorunlu paketler: ${[...state.pkgs].join(', ')}\nAlıcı: ${state.name} · ${state.phone}`,
+    files: state.files.map(name => ({ name })),
+    shipment: { id: String(4000 + Math.floor(Math.random() * 900)), status: s1 === 'evet' ? 'Teslim edildi' : 'Yolda', kind: s1 === 'evet' ? 'success' : 'info', from: ship.from, to: ship.to, service: ship.service, tracking: ship.tracking }
+  });
+  if (missing) {
+    t.status = 'awaiting';
+    t.needs = 'hasar fotoğrafları eksik';
+    t.msgs.push(P.msg('sys', Date.now() + 2000, 'Talep durumu **Yanıtınız bekleniyor** olarak güncellendi'));
+    P.save();
+  }
+  state.submitted = { id: t.id, missing };
+  render();
+  P.refreshBadge();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+/* ---------------- Events ---------------- */
+left.addEventListener('click', e => {
+  const open = e.target.closest('[data-open]');
+  if (open) { const n = +open.dataset.open; if (n <= state.reached && n !== state.step) { state.step = n; render(); } return; }
+  const nx = e.target.closest('[data-next]');
+  if (nx && !nx.disabled) { next(+nx.dataset.next); return; }
+  if (e.target.closest('#drop')) { $('#fileIn').click(); return; }
+  const rm = e.target.closest('[data-rm]');
+  if (rm) { e.preventDefault(); state.files.splice(+rm.dataset.rm, 1); render(); return; }
+  const ed = e.target.closest('[data-edit]');
+  if (ed) { e.preventDefault(); if (ed.dataset.edit === 'name') state.editName = true; else state.editPhone = true; render(); const inp = $(ed.dataset.edit === 'name' ? '#nameIn' : '#phoneIn'); if (inp) { inp.focus(); inp.select(); } }
+});
+left.addEventListener('submit', e => { if (e.target.id === 'findForm') { e.preventDefault(); find(); } });
+left.addEventListener('input', e => {
+  const id = e.target.id;
+  if (id === 'trk') { state.tracking = e.target.value; if (state.ship && state.ship.tracking !== state.tracking.trim().toUpperCase()) { state.ship = null; state.pkgs = new Set(); render(); $('#trk').focus(); const el = $('#trk'); el.setSelectionRange(el.value.length, el.value.length); } }
+  else if (id === 'cond') { state.cond = e.target.value; $('#condCnt').textContent = state.cond.length; toggleNext(2, state.cond.trim() && state.product.trim()); }
+  else if (id === 'product') { state.product = e.target.value; $('#prodCnt').textContent = state.product.length; toggleNext(2, state.cond.trim() && state.product.trim()); }
+  else if (id === 'nameIn') { state.name = e.target.value; toggleNext(4, state.confirmed && state.name.trim() && state.phone.trim()); }
+  else if (id === 'phoneIn') { state.phone = e.target.value; toggleNext(4, state.confirmed && state.name.trim() && state.phone.trim()); }
+});
+const toggleNext = (n, ok) => { const b = $(`[data-next="${n}"]`); if (b) b.disabled = !ok; };
+left.addEventListener('change', e => {
+  if (e.target.dataset.pkg) { if (e.target.checked) state.pkgs.add(e.target.dataset.pkg); else state.pkgs.delete(e.target.dataset.pkg); render(); return; }
+  if (e.target.id === 'confirm') { state.confirmed = e.target.checked; toggleNext(4, state.confirmed && state.name.trim() && state.phone.trim()); }
+});
+left.addEventListener('dragover', e => { const d = e.target.closest('#drop'); if (d) { e.preventDefault(); d.classList.add('over'); } });
+left.addEventListener('dragleave', e => { const d = e.target.closest('#drop'); if (d) d.classList.remove('over'); });
+left.addEventListener('drop', e => { const d = e.target.closest('#drop'); if (!d) return; e.preventDefault(); Array.from(e.dataTransfer.files).forEach(f => state.files.push(f.name)); render(); });
+$('#fileIn').addEventListener('change', e => { Array.from(e.target.files).forEach(f => state.files.push(f.name)); e.target.value = ''; render(); });
+
+/* demo: ?demo=2..5 ilgili adımı örnek verilerle açar (sunum kolaylığı) */
+const demo = +q.get('demo') || 0;
+if (demo >= 2) {
+  state.tracking = '1ZH283960458906017'; state.ship = lookup(state.tracking);
+  state.pkgs = new Set([state.ship.packages[0], state.ship.packages[3]]);
+  state.done[1] = true; state.reached = 2; state.step = 2;
+}
+if (demo >= 3) {
+  state.cond = "Alıcı paketi 18 Ağustos'ta teslim aldı, üç paketin köşeleri ezilmiş ve bant yeniden yapıştırılmış. Kutuların içinde 9 çift ayakkabının ökçesi kırık.";
+  state.product = '12 çift el yapımı Yemeni (deri ayakkabı), model ZM-22431, 40-44 numara. Her çift kendi kutusunda.';
+  state.done[2] = true; state.reached = 3; state.step = 3;
+}
+if (demo >= 4) { state.files = ['RESIM_1.jpg', 'RESIM_2.jpg', 'belge.pdf']; state.done[3] = true; state.reached = 4; state.step = 4; }
+if (demo >= 5) state.confirmed = true;
+if (demo >= 6) { state.done[4] = true; submit(); }
+
+P.hydrateIcons();
+render();
+})();
+</script>
+</body>
+</html>

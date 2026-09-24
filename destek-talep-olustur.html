@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yeni Destek Talebi · Zemlog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/proto.css">
+<style>
+/* ---------- Talep oluşturma ---------- */
+.page-head .page-title{font-size:20px}
+.page-sub{font-size:13px;color:var(--muted);margin:0}
+.create{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:24px;align-items:start}
+
+/* konu kartları */
+.topics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.topic{background:#fff;border:1px solid var(--gray-200);border-radius:10px;padding:22px 24px;text-align:left;display:flex;flex-direction:column;gap:6px;min-height:146px;transition:border-color .15s,background .15s,box-shadow .15s;cursor:pointer}
+.topic:hover{border-color:var(--primary-300);background:var(--primary-100)}
+.topic .ic{width:26px;height:26px;color:var(--heading);margin-bottom:10px}
+.topic h3{margin:0;font-size:14px;font-weight:600;color:var(--heading)}
+.topic p{margin:0;font-size:13px;color:var(--muted);line-height:1.45}
+.topic.selected{background:var(--primary-100);border-color:var(--primary-300);box-shadow:0 0 0 1px var(--primary-300) inset}
+.topic:focus-visible{outline:2px solid var(--primary-300);outline-offset:2px}
+
+/* adım 2 (geçici form) */
+.step{margin-top:20px;display:none}
+.step.show{display:block;animation:pop .2s ease}
+.step-head{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border)}
+.step-no{width:28px;height:28px;border-radius:50%;background:var(--primary-500);color:#fff;font-size:13px;font-weight:600;display:grid;place-items:center;flex-shrink:0}
+.step-head h2{margin:0;font-size:15px;font-weight:600;color:var(--heading)}
+.step-head p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+.step-body{padding:20px;display:flex;flex-direction:column;gap:14px}
+.step-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.sel-ship{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--gray-100);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;margin-top:8px}
+.sel-ship b{color:var(--heading)}
+.sel-ship[hidden]{display:none}
+
+@media (max-width:1100px){.create{grid-template-columns:1fr}}
+@media (max-width:767px){.topics{grid-template-columns:1fr 1fr}.topic{min-height:0}}
+@media (max-width:480px){.topics{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="header" id="header"></header>
+
+    <main class="content">
+      <div class="page-head">
+        <div style="min-width:0">
+          <h1 class="page-title">Size nasıl yardımcı olabiliriz?</h1>
+          <p class="page-sub">Öncelikle konuyu seçin, gerekli bilgileri adım adım birlikte tamamlayalım.</p>
+        </div>
+        <a class="btn btn-secondary" href="destek-taleplerim.html"><i data-icon="arrow-left"></i>Talep Listesine Dön</a>
+      </div>
+
+      <div class="create">
+        <div>
+          <div class="topics" id="topics" role="radiogroup" aria-label="Konu seçin"></div>
+
+          <!-- Adım 2 (diğer konular): tasarım gelene kadar geçici form -->
+          <form class="card step" id="step2" novalidate>
+            <div class="step-head">
+              <span class="step-no">2</span>
+              <div><h2 id="stepTitle">Detaylar</h2><p id="stepSub">Birkaç bilgiyle talebi ekibimize iletelim.</p></div>
+            </div>
+            <div class="step-body">
+              <div class="field" id="fRefField">
+                <label for="fRef">Gönderi / Takip No</label>
+                <input class="input" id="fRef" list="shipList" placeholder="1ZH… takip numarası veya gönderi ID" autocomplete="off">
+                <datalist id="shipList"></datalist>
+                <div class="sel-ship" id="selShip" hidden></div>
+                <div class="hint">Açık gönderilerinizden seçebilir veya yeni bir numara yazabilirsiniz.</div>
+              </div>
+              <div class="field" id="fSubjectField">
+                <label for="fSubject">Konu <span class="req">*</span></label>
+                <input class="input" id="fSubject" placeholder="Talebinizi kısaca özetleyin" maxlength="120">
+                <div class="err-msg">Konu alanı zorunludur.</div>
+              </div>
+              <div class="field" id="fMsgField">
+                <label for="fMsg">Açıklama <span class="req">*</span></label>
+                <textarea class="textarea" id="fMsg" placeholder="Sorunu ve beklentinizi yazın…"></textarea>
+                <div class="err-msg">Lütfen en az 10 karakterlik bir açıklama yazın.</div>
+              </div>
+              <div class="field">
+                <label class="attach" for="fFiles"><i data-icon="paperclip"></i>Dosya ekle</label>
+                <input type="file" id="fFiles" multiple hidden>
+                <div class="files" id="fileChips"></div>
+              </div>
+            </div>
+            <div class="step-foot">
+              <button type="button" class="btn btn-ghost" id="backBtn"><i data-icon="arrow-left"></i>Geri</button>
+              <button type="submit" class="btn btn-primary"><i data-icon="send"></i>Talebi Gönder</button>
+            </div>
+          </form>
+        </div>
+
+        <aside class="card open-panel" id="openPanel"></aside>
+      </div>
+    </main>
+
+    <footer class="site-foot">© 2026, <a href="#">Zemlog</a> Tüm hakları saklıdır.</footer>
+  </div>
+</div>
+
+<script src="assets/proto.js"></script>
+<script>
+(() => {
+'use strict';
+const P = window.Proto;
+const { $, $$, esc, icon, tickets, D } = P;
+P.renderShell('support');
+
+/* ---------------- Konular ---------------- */
+const TOPICS = [
+  { key: 'shipment', icon: 'package', title: 'Gönderide bir sorun var', desc: 'Hasar, teslim edilmeme veya eksik çıkma. Durumu birlikte belirleyelim.', cat: 'shipment', ref: true, sub: 'Gönderiyi seçin, sorunu kısaca anlatın.', flow: 'destek-talep-gonderi-sorunu.html' },
+  { key: 'user', icon: 'user', title: 'Kullanıcı ve yetki', desc: 'Kullanıcı ekleme veya mevcut yetkileri değiştirme.', cat: 'account', ref: false, sub: 'Hangi kullanıcı için ne yapılmasını istediğinizi yazın.', flow: 'destek-talep-form.html?konu=user' },
+  { key: 'tech', icon: 'monitor-check', title: 'Panelde teknik sorun', desc: 'Panelde karşılaştığınız hata veya erişim sorunu.', cat: 'tech', ref: false, sub: 'Hatayı gördüğünüz sayfayı ve adımları yazın, ekran görüntüsü ekleyin.', flow: 'destek-talep-form.html?konu=tech' },
+  { key: 'other', icon: 'help-circle', title: 'Başka bir konu', desc: 'Konunuz listede yoksa buradan iletin, ilgili ekibe yönlendirelim.', cat: 'other', ref: false, sub: 'Konuyu kısaca özetleyin, ilgili ekibe yönlendirelim.', flow: 'destek-talep-form.html?konu=other' }
+];
+let selected = null;
+
+const renderTopics = () => {
+  $('#topics').innerHTML = TOPICS.map(t => `<button type="button" class="topic ${selected === t.key ? 'selected' : ''}" role="radio" aria-checked="${selected === t.key}" data-topic="${t.key}">${icon(t.icon)}<h3>${esc(t.title)}</h3><p>${esc(t.desc)}</p></button>`).join('');
+};
+
+/* ---------------- Adım 2 ---------------- */
+const step2 = $('#step2');
+const openShipments = () => tickets.filter(t => t.status !== 'closed' && t.shipment).map(t => t.shipment);
+const showStep2 = (scroll = true) => {
+  const t = TOPICS.find(x => x.key === selected);
+  if (t.flow) { location.href = t.flow; return; }
+  $('#stepTitle').textContent = t.title;
+  $('#stepSub').textContent = t.sub;
+  $('#fRefField').style.display = t.ref ? '' : 'none';
+  $('#shipList').innerHTML = openShipments().map(s => `<option value="${esc(s.tracking)}">ID ${esc(s.id)} · ${esc(s.to.name)}, ${esc(s.to.city)}</option>`).join('');
+  step2.classList.add('show');
+  if (scroll) {
+    step2.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    setTimeout(() => (t.ref ? $('#fRef') : $('#fSubject')).focus({ preventScroll: true }), 250);
+  }
+};
+const hideStep2 = () => { step2.classList.remove('show'); };
+
+const pendingFiles = [];
+const renderChips = () => { $('#fileChips').innerHTML = pendingFiles.map(n => `<span>${esc(n)}</span>`).join(''); };
+const matchShipment = () => {
+  const v = $('#fRef').value.trim();
+  const s = openShipments().find(x => x.tracking === v || x.id === v);
+  const box = $('#selShip');
+  if (s) { box.hidden = false; box.innerHTML = `<span><b>ID ${esc(s.id)}</b> · ${esc(s.from.city)} → ${esc(s.to.name)}, ${esc(s.to.city)}</span><span class="chip ${s.kind}">${esc(s.status)}</span>`; }
+  else { box.hidden = true; box.innerHTML = ''; }
+  return s || null;
+};
+
+const submit = () => {
+  const t = TOPICS.find(x => x.key === selected);
+  const subject = $('#fSubject').value.trim();
+  const text = $('#fMsg').value.trim();
+  let ok = true;
+  $('#fSubjectField').classList.toggle('err', !subject); if (!subject) ok = false;
+  $('#fMsgField').classList.toggle('err', text.length < 10); if (text.length < 10) ok = false;
+  if (!ok) return;
+  const ship = t.ref ? matchShipment() : null;
+  const ref = t.ref ? ($('#fRef').value.trim() || null) : null;
+  const created = P.createTicket({ cat: t.cat, subject, ref: ship ? ship.id : ref, text, files: pendingFiles.map(name => ({ name })), shipment: ship ? JSON.parse(JSON.stringify(ship)) : null });
+  location.href = `destek-taleplerim.html?created=${created.id}`;
+};
+
+/* ---------------- Açık talepler paneli (ortak) ---------------- */
+const renderOpen = () => { $('#openPanel').innerHTML = P.openPanelHtml(); };
+
+/* ---------------- Events ---------------- */
+$('#topics').addEventListener('click', e => {
+  const b = e.target.closest('[data-topic]');
+  if (!b) return;
+  selected = b.dataset.topic;
+  renderTopics();
+  showStep2();
+});
+$('#backBtn').addEventListener('click', () => { selected = null; renderTopics(); hideStep2(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+step2.addEventListener('submit', e => { e.preventDefault(); submit(); });
+$('#fRef').addEventListener('input', matchShipment);
+$('#fFiles').addEventListener('change', e => { Array.from(e.target.files).forEach(f => pendingFiles.push(f.name)); renderChips(); e.target.value = ''; });
+$('#fSubject').addEventListener('input', () => $('#fSubjectField').classList.remove('err'));
+$('#fMsg').addEventListener('input', () => $('#fMsgField').classList.remove('err'));
+
+P.hydrateIcons();
+renderTopics();
+renderOpen();
+
+/* ?konu=shipment ile doğrudan seçili gelir */
+const pre = new URLSearchParams(location.search).get('konu');
+if (pre && TOPICS.some(t => t.key === pre)) { selected = pre; renderTopics(); showStep2(false); }
+})();
+</script>
+</body>
+</html>

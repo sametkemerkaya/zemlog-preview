@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yeni Talep · Zemlog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/proto.css">
+<style>
+.page-head .page-title{font-size:20px}
+.page-sub{font-size:13px;color:var(--foreground);margin:0}
+.wiz{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:22px;align-items:start}
+.steps{padding:0 24px}
+.step{border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:0}
+.step-head{display:flex;align-items:center;gap:12px;padding:22px 0 14px;width:100%;text-align:left}
+.step:not(.open) .step-head{padding:20px 0}
+.step-num{width:26px;height:26px;border-radius:50%;border:1px solid var(--gray-300);color:var(--heading);font-size:12px;font-weight:500;display:grid;place-items:center;flex-shrink:0;background:#fff}
+.step.open .step-num{background:var(--primary-500);border-color:var(--primary-500);color:#fff}
+.step.done:not(.open) .step-num{background:var(--success-100);border-color:var(--success-100);color:var(--success-900)}
+.step-num .ic{width:14px;height:14px}
+.step-title{display:block;font-size:15px;font-weight:500;color:var(--heading)}
+.step-sub{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.step-head .chev{margin-left:auto;width:18px;height:18px;color:var(--muted);transition:transform .2s}
+.step.open .chev{transform:rotate(180deg)}
+.step-body{display:none;padding:0 0 24px}
+.step.open .step-body{display:block}
+.drop{border:1px dashed var(--gray-300);border-radius:10px;padding:22px;text-align:center;cursor:pointer;background:var(--gray-100);transition:background .15s,border-color .15s}
+.drop:hover,.drop.over{border-color:var(--primary-300);background:var(--primary-100)}
+.drop .ic{width:22px;height:22px;color:var(--heading)}
+.drop p{margin:6px 0 0;font-size:12px;color:var(--muted)}
+.drop p b{color:var(--heading);font-weight:600}
+.frow{display:flex;align-items:center;gap:8px;padding:9px 4px;border-bottom:1px solid var(--border);font-size:13px}
+.frow .n{color:var(--heading);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.frow .s{color:var(--muted);font-size:12px}
+.frow a{margin-left:auto;font-size:12px;color:var(--heading);text-decoration:underline}
+.desc{font-size:13px;color:var(--foreground);margin:0 0 12px}
+.lbl{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;font-weight:500;color:var(--heading);margin-bottom:8px}
+.lbl .cnt{font-weight:400;color:var(--muted);font-size:11px}
+.ta{width:100%;min-height:80px;border:1px solid var(--gray-300);border-radius:6px;padding:14px 16px;font-size:13px;outline:none;resize:vertical;line-height:1.5;transition:border-color .15s,box-shadow .15s}
+.ta::placeholder{color:var(--foreground)}
+.ta:focus{border-color:var(--primary-300);box-shadow:0 0 0 3px rgba(58,152,188,.16)}
+.foot{display:flex;justify-content:flex-end;margin-top:16px}
+.success-wrap{padding:20px}
+.success{background:#e9f9ef;border-radius:10px;padding:24px 20px}
+.ok-title{display:flex;align-items:center;gap:14px;font-size:20px;font-weight:600;color:var(--success-500);margin-bottom:14px}
+.ok-ico{width:38px;height:38px;border-radius:50%;background:#fff;display:grid;place-items:center}
+.ok-ico .ic{width:24px;height:24px;color:var(--success-500);stroke-width:2.5}
+.success p{margin:0 0 24px;font-size:13px;line-height:1.55}
+.btn-success{background:var(--success-500);color:#fff}
+.btn-success:hover{background:#00b549}
+@media (max-width:1100px){.wiz{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="header" id="header"></header>
+    <main class="content">
+      <div class="page-head">
+        <div style="min-width:0">
+          <h1 class="page-title" id="pTitle"></h1>
+          <p class="page-sub" id="pSub"></p>
+        </div>
+        <a class="btn btn-secondary" href="destek-taleplerim.html"><i data-icon="arrow-left"></i>Talep Listesine Dön</a>
+      </div>
+      <div class="wiz">
+        <section class="card" id="left"></section>
+        <aside class="card open-panel" id="openPanel"></aside>
+      </div>
+    </main>
+    <footer class="site-foot">© 2026, <a href="#">Zemlog</a> Tüm hakları saklıdır.</footer>
+  </div>
+</div>
+<script src="assets/proto.js"></script>
+<script>
+(() => {
+'use strict';
+const P = window.Proto;
+const { $, esc, icon } = P;
+P.renderShell('support');
+const CFG = {
+  user: { title: 'Kullanıcı ve yetki işlemleri', sub: 'Hesabınıza kullanıcı eklemek veya mevcut yetkileri değiştirmek için talebinizi iletin.', cat: 'account', fallback: 'Kullanıcı ve yetki talebi', files: false },
+  tech: { title: 'Panelde yaşadığınız sorunu bildirin', sub: 'Hangi sayfada, ne yaparken karşılaştığınızı yazın. Ekran görüntüsü eklerseniz daha hızlı çözebiliriz.', cat: 'tech', fallback: 'Panelde teknik sorun', files: true },
+  other: { title: 'Size nasıl yardımcı olabiliriz?', sub: 'Konunuzu kısaca anlatın; talebinizi ilgili ekibe biz yönlendirelim.', cat: 'other', fallback: 'Genel talep', files: true }
+};
+const qk = new URLSearchParams(location.search).get('konu');
+const C = CFG[qk] || CFG.user;
+document.title = C.title + ' · Zemlog';
+$('#pTitle').textContent = C.title; $('#pSub').textContent = C.sub;
+const left = $('#left');
+let text = '', files = [], step = 1, done1 = false, created = null;
+const fin = document.createElement('input'); fin.type = 'file'; fin.multiple = true; fin.hidden = true; fin.accept = '.pdf,.jpg,.jpeg,.png'; document.body.appendChild(fin);
+
+const submit = () => {
+  const t = P.createTicket({ cat: C.cat, subject: text.trim().split(/[.\n]/)[0].slice(0, 70) || C.fallback, text: text.trim(), files: files.map(name => ({ name })) });
+  created = t.id; render(); P.refreshBadge();
+};
+const s1 = () => `<div class="step ${step === 1 ? 'open' : ''} ${done1 ? 'done' : ''}">
+  <button type="button" class="step-head" data-open="1"><span class="step-num">${done1 && step !== 1 ? icon('check') : 1}</span><span><span class="step-title">Talebiniz</span>${step !== 1 ? '<span class="step-sub">Açıklama girildi</span>' : ''}</span>${icon('chevron-down', 'ic chev')}</button>
+  <div class="step-body">
+    <div class="lbl"><span>Talebinizi kısaca anlatın; ilgili ekibimiz en kısa sürede dönüş yapacak.</span><span class="cnt"><span id="cnt">${text.length}</span> / 254</span></div>
+    <textarea class="ta" id="ta" maxlength="254" placeholder="Ne oldu ve bizden ne yapmamızı beklediğinizi yazın.">${esc(text)}</textarea>
+    <div class="foot"><button type="button" class="btn btn-secondary" id="next" ${text.trim() ? '' : 'disabled'}>Devam et${icon('arrow-right')}</button></div>
+  </div></div>`;
+const s2 = () => !C.files ? '' : `<div class="step ${step === 2 ? 'open' : ''}">
+  <button type="button" class="step-head" data-open="2"><span class="step-num">2</span><span><span class="step-title">Ek dosya</span>${step !== 2 ? `<span class="step-sub">${files.length ? files.length + ' dosya eklendi' : 'Bekliyor'}</span>` : ''}</span>${icon('chevron-down', 'ic chev')}</button>
+  <div class="step-body">
+    <p class="desc">İlgili ekran görüntüsünü veya dosyayı ekleyin. Zorunlu değil.</p>
+    <div class="drop" id="drop">${icon('upload')}<p><b>Ekran görüntüsü veya dosya yükleyin</b> · PDF, JPG, PNG (Maks. 10MB)</p></div>
+    <div>${files.map((n, i) => `<div class="frow"><span class="n">${esc(n)}</span><span class="s">· yüklendi</span><a href="#" data-rm="${i}">Kaldır</a></div>`).join('')}</div>
+    <div class="foot"><button type="button" class="btn btn-primary" id="send">${icon('send')}Talebi Gönder</button></div>
+  </div></div>`;
+
+const render = () => {
+  left.innerHTML = created ? `
+    <div class="success-wrap"><div class="success">
+      <div class="ok-title"><span class="ok-ico">${icon('check')}</span>Talebiniz alındı</div>
+      <p>Talep numaranız #DT-${created}. İlgili ekibimiz talebinizi inceleyip en kısa sürede dönüş yapacak.</p>
+      <a class="btn btn-success" href="destek-taleplerim.html?created=${created}">${icon('arrow-left')}Talep Listesine Dön</a>
+    </div></div>` : `<div class="steps">${s1()}${s2()}</div>`;
+  $('#openPanel').innerHTML = P.openPanelHtml();
+};
+left.addEventListener('input', e => { if (e.target.id !== 'ta') return; text = e.target.value; $('#cnt').textContent = text.length; $('#next').disabled = !text.trim(); });
+left.addEventListener('click', e => {
+  const o = e.target.closest('[data-open]');
+  if (o) { const n = +o.dataset.open; if (n === 1 || done1) { step = n; render(); } return; }
+  if (e.target.closest('#next')) { if (!text.trim()) return; if (C.files) { done1 = true; step = 2; render(); } else submit(); return; }
+  if (e.target.closest('#send')) { submit(); return; }
+  if (e.target.closest('#drop')) { fin.click(); return; }
+  const rm = e.target.closest('[data-rm]'); if (rm) { e.preventDefault(); files.splice(+rm.dataset.rm, 1); render(); }
+});
+left.addEventListener('dragover', e => { const d = e.target.closest('#drop'); if (d) { e.preventDefault(); d.classList.add('over'); } });
+left.addEventListener('dragleave', e => { const d = e.target.closest('#drop'); if (d) d.classList.remove('over'); });
+left.addEventListener('drop', e => { if (!e.target.closest('#drop')) return; e.preventDefault(); Array.from(e.dataTransfer.files).forEach(f => files.push(f.name)); render(); });
+fin.addEventListener('change', () => { Array.from(fin.files).forEach(f => files.push(f.name)); fin.value = ''; render(); });
+P.hydrateIcons();
+render();
+})();
+</script>
+</body>
+</html>

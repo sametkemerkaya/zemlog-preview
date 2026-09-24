@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Talep Detayı · Zemlog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/proto.css">
+<style>
+/* ---------- Detay sayfası ---------- */
+.detail{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:24px;align-items:start}
+
+/* sohbet kartı */
+.chat{display:flex;flex-direction:column;height:calc(100dvh - 232px);min-height:560px;overflow:hidden}
+.chat-head{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);flex-shrink:0}
+.chat-av{width:40px;height:40px;border-radius:10px;background:var(--gray-100);border:1px solid var(--border);display:grid;place-items:center;font-size:13px;font-weight:600;color:var(--heading);flex-shrink:0}
+.chat-name{font-size:15px;font-weight:600;color:var(--heading);line-height:1.3}
+.chat-online{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.chat-online::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--success-500)}
+.chat-head .pill{margin-left:auto}
+.chat-body{flex:1;overflow-y:auto;background:#f8f9fa;padding:16px 20px 20px;display:flex;flex-direction:column;gap:14px}
+.day-sep{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:13px;margin:4px 0 6px}
+.day-sep::before,.day-sep::after{content:"";flex:1;height:1px;background:var(--gray-200)}
+.m{display:flex;gap:10px;max-width:82%}
+.m.agent{align-self:flex-start}
+.m.me{align-self:flex-end;flex-direction:row-reverse}
+.m-av{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-size:12px;font-weight:600}
+.m.agent .m-av{background:#fff;border:1px solid var(--gray-200);color:var(--heading)}
+.m.me .m-av{background:var(--primary-100);border:1px solid var(--primary-300);color:var(--primary-700)}
+.m-av.ghost{visibility:hidden}
+.m-body{min-width:0;display:flex;flex-direction:column}
+.m.me .m-body{align-items:flex-end}
+.m-bubble{padding:12px 14px;border-radius:12px;font-size:14px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+.m.agent .m-bubble{background:#fff;border:1px solid var(--gray-200);color:var(--foreground)}
+.m.me .m-bubble{background:var(--primary-200);color:var(--foreground)}
+.m-meta{font-size:12px;color:var(--muted);margin-top:6px;display:flex;align-items:center;gap:6px}
+.m-meta .via{color:var(--primary-500)}
+.m-meta .sep{width:1px;height:12px;background:var(--gray-300)}
+.m-meta .ic{width:14px;height:14px;color:var(--primary-500)}
+.m-file{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--gray-200);border-radius:12px;padding:12px 14px;min-width:min(300px,100%)}
+.m.me .m-file{background:var(--primary-200);border-color:transparent}
+.file-ico{width:40px;height:40px;border-radius:8px;background:var(--primary-100);color:var(--primary-500);display:grid;place-items:center;flex-shrink:0}
+.file-ico .ic{width:22px;height:22px}
+.file-name{font-size:14px;color:var(--heading);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-size{font-size:13px;color:var(--muted)}
+.file-dl{margin-left:auto;color:var(--heading);width:32px;height:32px;display:grid;place-items:center;border-radius:6px;flex-shrink:0}
+.file-dl:hover{background:var(--gray-100)}
+.sys{align-self:center;background:var(--gray-200);color:var(--muted);font-size:12px;padding:6px 12px;border-radius:999px;text-align:center}
+.sys b{color:var(--foreground);font-weight:600}
+.chat-foot{display:flex;gap:10px;padding:14px 20px;border-top:1px solid var(--border);background:#fff;flex-shrink:0}
+.sq{width:44px;height:44px;border-radius:8px;border:1px solid var(--gray-200);display:grid;place-items:center;color:var(--heading);flex-shrink:0;transition:background .15s;background:#fff}
+.sq:hover{background:var(--gray-100)}
+.sq.send{background:var(--primary-500);border-color:var(--primary-500);color:#fff}
+.sq.send:hover{background:var(--primary-600)}
+.chat-foot input{flex:1;min-width:0;height:44px;border:1px solid var(--gray-200);border-radius:8px;padding:0 14px;outline:none;font-size:14px;transition:border-color .15s,box-shadow .15s}
+.chat-foot input::placeholder{color:var(--placeholder)}
+.chat-foot input:focus{border-color:var(--primary-300);box-shadow:0 0 0 3px rgba(58,152,188,.16)}
+.chat-closed{display:flex;align-items:center;gap:10px;padding:16px 20px;border-top:1px solid var(--border);background:var(--gray-100);font-size:13px;color:var(--muted);flex-shrink:0}
+.chat-closed .ic{width:18px;height:18px;color:var(--gray-700)}
+.chat-closed .btn{margin-left:auto}
+
+/* bilgi paneli */
+.info{padding:24px}
+.info h3{font-size:15px;font-weight:600;color:var(--heading);margin:0 0 12px}
+.kv{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:7px 0;font-size:14px}
+.kv .k{color:var(--muted)}
+.kv .v{color:var(--heading);font-weight:500;text-align:right;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.kv a{color:var(--primary-500);text-decoration:underline}
+.info hr{border:0;border-top:1px solid var(--border);margin:18px 0}
+.ship{border:1px solid var(--gray-200);border-radius:10px;padding:16px}
+.ship-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.ship-id{font-weight:600;color:var(--heading);font-size:14px}
+.ship-party{font-size:14px;color:var(--foreground);line-height:1.5}
+.ship-party b{color:var(--heading);font-weight:700;margin-right:6px}
+.ship-arrow{color:var(--heading);width:16px;height:16px;margin:4px 0}
+.ship-svc{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-top:8px}
+.ship-svc span:first-child{white-space:nowrap}
+.ship-svc .trk{color:var(--heading);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.att{display:flex;align-items:center;gap:14px;border:1px solid var(--gray-200);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.att .file-name{font-size:14px}
+.att:last-of-type{margin-bottom:0}
+.info .btn-block{margin-top:20px}
+.info .none{font-size:13px;color:var(--muted)}
+.notfound{padding:64px 16px;text-align:center;color:var(--muted)}
+.notfound .ic{width:40px;height:40px;color:var(--gray-400);margin-bottom:10px}
+.notfound h4{margin:0 0 4px;font-size:15px;font-weight:600;color:var(--heading)}
+
+@media (max-width:1100px){
+  .detail{grid-template-columns:1fr}
+  .chat{height:auto;min-height:0}
+  .chat-body{max-height:60dvh;min-height:320px}
+}
+@media (max-width:767px){
+  .m{max-width:94%}
+  .info{padding:18px}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="header" id="header"></header>
+
+    <main class="content">
+      <div class="page-head">
+        <div style="min-width:0">
+          <h1 class="page-title" id="pageTitle">Talep Detayı</h1>
+          <nav class="crumbs" aria-label="breadcrumb">
+            <a href="#"><i data-icon="house"></i>Anasayfa</a>
+            <i data-icon="chevron-right" class="sep"></i>
+            <a href="destek-taleplerim.html">Destek Taleplerim</a>
+            <i data-icon="chevron-right" class="sep"></i>
+            <b id="crumbId">#DT-…</b>
+          </nav>
+        </div>
+        <a class="btn btn-secondary" href="destek-taleplerim.html"><i data-icon="arrow-left"></i>Listeye Dön</a>
+      </div>
+
+      <div class="detail" id="detail"></div>
+    </main>
+
+    <footer class="site-foot">© 2026, <a href="#">Zemlog</a> Tüm hakları saklıdır.</footer>
+  </div>
+</div>
+
+<script src="assets/proto.js"></script>
+<script>
+(() => {
+'use strict';
+const P = window.Proto;
+const { $, esc, icon, CATS, STATUS, byId, ticketNo, fmtTime, fmtDay, fmtShort, sameDay, toast, save } = P;
+P.renderShell('support');
+
+const params = new URLSearchParams(location.search);
+const id = +params.get('id');
+const t = byId(id);
+const root = $('#detail');
+
+/* mesaj metnindeki **kalın** işaretini <b>'ye çevir */
+const rich = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+const fileIcon = type => icon(type === 'image' ? 'image' : 'file-text');
+const fileCard = (f, cls = 'm-file') => `<div class="${cls}"><span class="file-ico">${fileIcon(f.type)}</span><span style="min-width:0"><span class="file-name" title="${esc(f.name)}">${esc(f.name)}</span><br><span class="file-size">${esc(f.size)}</span></span><a class="file-dl" href="#" title="İndir" aria-label="İndir" data-dl="${esc(f.name)}">${icon('download')}</a></div>`;
+
+const renderThread = () => {
+  let html = '';
+  let prevDay = null, prevFrom = null;
+  t.msgs.forEach(m => {
+    if (prevDay === null || !sameDay(prevDay, m.at)) { html += `<div class="day-sep">${fmtDay(m.at)}</div>`; prevDay = m.at; prevFrom = null; }
+    if (m.from === 'sys') { html += `<div class="sys">${rich(m.text)}</div>`; prevFrom = 'sys'; return; }
+    const me = m.from === 'me';
+    const first = prevFrom !== m.from;
+    const av = me ? 'SK' : 'OD';
+    const body = m.file ? fileCard(m.file) : `<div class="m-bubble">${esc(m.text)}</div>`;
+    const meta = me
+      ? `${m.via === 'mail' ? '<span class="via">Mail ile gönderildi</span><span class="sep"></span>' : ''}<span>${fmtTime(m.at)}</span>${icon('check')}`
+      : `<span>Operasyon Destek</span><span class="sep"></span><span>${fmtTime(m.at)}</span>`;
+    html += `<div class="m ${me ? 'me' : 'agent'}"><div class="m-av ${first ? '' : 'ghost'}">${av}</div><div class="m-body">${body}<div class="m-meta">${meta}</div></div></div>`;
+    prevFrom = m.from;
+  });
+  return html;
+};
+
+const renderInfo = () => {
+  const s = t.shipment;
+  const refCell = t.ref ? `<a href="#" title="Gönderiye git">${esc(t.ref)}</a>` : '—';
+  return `
+    <h3>Talep Bilgileri</h3>
+    <div class="kv"><span class="k">Talep No</span><span class="v">${ticketNo(t)}</span></div>
+    <div class="kv"><span class="k">Konu Başlığı</span><span class="v"><span class="chip">${esc(CATS[t.cat] || t.cat)}</span></span></div>
+    <div class="kv"><span class="k">Sipariş / Gönderi ID</span><span class="v">${refCell}</span></div>
+    <div class="kv"><span class="k">Oluşturma</span><span class="v">${fmtShort(t.msgs[0].at)}</span></div>
+    <div class="kv"><span class="k">Temsilci</span><span class="v">${esc(t.agent || '—')}</span></div>
+    <hr>
+    <h3>İlgili Gönderi</h3>
+    ${s ? `<div class="ship">
+      <div class="ship-top"><span class="ship-id">ID: ${esc(s.id)}</span><span class="chip md ${s.kind}">${esc(s.status)}</span></div>
+      <div class="ship-party"><b>${esc(s.from.name)}</b>${esc(s.from.country)},&nbsp; ${esc(s.from.city)}</div>
+      ${icon('arrow-down', 'ic ship-arrow')}
+      <div class="ship-party"><b>${esc(s.to.name)}</b>${esc(s.to.country)},&nbsp; ${esc(s.to.city)}</div>
+      <div class="ship-svc"><span>${esc(s.service)}</span><span>·</span><span class="trk">${esc(s.tracking)}</span></div>
+    </div>` : '<div class="none">Bu talebe bağlı bir gönderi yok.</div>'}
+    <hr>
+    <h3>Ekler</h3>
+    ${t.attachments && t.attachments.length ? t.attachments.map(f => fileCard(f, 'att')).join('') : '<div class="none">Bu talepte ek dosya yok.</div>'}
+    ${t.status === 'closed'
+      ? `<button class="btn btn-secondary btn-block" type="button" disabled>${icon('lock')}Talep Kapatıldı</button>`
+      : `<button class="btn btn-danger-light btn-block" type="button" id="closeBtn">${icon('ban')}Talebi Kapat</button>`}`;
+};
+
+const render = () => {
+  if (!t) {
+    $('#pageTitle').textContent = 'Talep bulunamadı';
+    $('#crumbId').textContent = id ? `#DT-${id}` : '#DT-…';
+    root.innerHTML = `<section class="card notfound" style="grid-column:1/-1">${icon('inbox')}<h4>Talep bulunamadı</h4><p>Bu numaraya ait bir talep yok. <a href="destek-taleplerim.html" style="color:var(--primary-500)">Listeye dönün</a>.</p></section>`;
+    return;
+  }
+  document.title = `${ticketNo(t)} · ${t.subject} · Zemlog`;
+  $('#pageTitle').textContent = t.subject;
+  $('#crumbId').textContent = ticketNo(t);
+  const closed = t.status === 'closed';
+  root.innerHTML = `
+    <section class="card chat">
+      <div class="chat-head">
+        <div class="chat-av">OD</div>
+        <div><div class="chat-name">Operasyon Destek</div><div class="chat-online">Çevrimiçi</div></div>
+        <span class="pill pill-${t.status}">${STATUS[t.status]}</span>
+      </div>
+      <div class="chat-body" id="thread">${renderThread()}</div>
+      ${closed
+        ? `<div class="chat-closed">${icon('lock')}<span>Bu talep kapatıldı. Yeni bir konu için yeni talep oluşturabilirsiniz.</span><a class="btn btn-light btn-sm" href="destek-talep-olustur.html">${icon('plus')}Yeni Talep</a></div>`
+        : `<form class="chat-foot" id="replyForm">
+            <label class="sq" for="replyFile" title="Dosya ekle">${icon('paperclip')}</label><input type="file" id="replyFile" hidden multiple>
+            <input type="text" id="replyText" placeholder="Lütfen mesajınızı girin..." autocomplete="off">
+            <button class="sq send" type="submit" title="Gönder" aria-label="Gönder">${icon('send')}</button>
+          </form>`}
+    </section>
+    <aside class="card info">${renderInfo()}</aside>`;
+  const th = $('#thread');
+  th.scrollTop = th.scrollHeight;
+  P.refreshBadge();
+};
+
+/* ---------------- Actions ---------------- */
+const touch = () => { t.updatedAt = Date.now(); save(); };
+const reopenIfAwaiting = () => {
+  if (t.status === 'awaiting') { t.status = 'open'; t.msgs.push(P.msg('sys', Date.now(), 'Talep durumu **Açık** olarak güncellendi')); }
+};
+let replyTimer = null;
+const scheduleAgentReply = () => {
+  clearTimeout(replyTimer);
+  replyTimer = setTimeout(() => {
+    if (t.status === 'closed') return;
+    t.msgs.push(P.msg('agent', Date.now(), 'Mesajınızı aldık, inceleyip kısa süre içinde dönüş yapacağız.'));
+    touch();
+    render();
+    toast(`${ticketNo(t)} için yeni yanıt var.`, 'info');
+  }, 5000);
+};
+
+root.addEventListener('submit', e => {
+  if (e.target.id !== 'replyForm') return;
+  e.preventDefault();
+  const input = $('#replyText');
+  const text = input.value.trim();
+  if (!text) { input.focus(); return; }
+  t.msgs.push(P.msg('me', Date.now(), text, { via: 'web' }));
+  reopenIfAwaiting();
+  touch();
+  render();
+  toast('Mesajınız iletildi.');
+  scheduleAgentReply();
+  $('#replyText').focus();
+});
+root.addEventListener('change', e => {
+  if (e.target.id !== 'replyFile' || !e.target.files.length) return;
+  Array.from(e.target.files).forEach((f, i) => {
+    const type = /^image\//.test(f.type) ? 'image' : 'pdf';
+    const size = f.size > 1024 * 1024 ? `${(f.size / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(f.size / 1024))} KB`;
+    t.msgs.push(P.msg('me', Date.now() + i, '', { via: 'web', file: { name: f.name, size, type } }));
+    t.attachments = t.attachments || [];
+    t.attachments.push({ name: f.name, size, type });
+  });
+  reopenIfAwaiting();
+  touch();
+  render();
+  toast(`${e.target.files.length} dosya eklendi.`);
+  scheduleAgentReply();
+});
+root.addEventListener('click', e => {
+  if (e.target.closest('#closeBtn')) { P.closeTicket(t.id, render); return; }
+  const dl = e.target.closest('[data-dl]');
+  if (dl) { e.preventDefault(); toast(`${dl.dataset.dl} indiriliyor (mock).`, 'info'); }
+});
+
+P.hydrateIcons();
+render();
+})();
+</script>
+</body>
+</html>
