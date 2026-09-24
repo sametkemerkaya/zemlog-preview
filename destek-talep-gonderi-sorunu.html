@@ -151,7 +151,7 @@
           <h1 class="page-title">Talebinizi birlikte tamamlayalım</h1>
           <p class="page-sub">Durumunuzu anladık. Dosyanızı eksiksiz iletebilmemiz için aşağıdaki bilgileri paylaşın.</p>
         </div>
-        <a class="btn btn-secondary" href="destek-taleplerim.html"><i data-icon="arrow-left"></i>Talep Listesine Dön</a>
+        <a class="btn btn-secondary" href="index.html"><i data-icon="arrow-left"></i>Talep Listesine Dön</a>
       </div>
 
       <div class="wiz">
@@ -282,7 +282,7 @@ const successHtml = () => `
     <div class="ok-title"><span class="ok-ico">${icon('check')}</span>Talebiniz alındı</div>
     <p>Talep numaranız #DT-${state.submitted.id}. Ekibimiz dosyanızı hazırlıyor; ek bilgi gerekirse panel üzerinden sizinle iletişime geçeceğiz.</p>
     ${state.submitted.missing ? `<div class="note-warn">Talebiniz <b>eksik belge</b> notuyla açıldı. Eksikler tamamlanana kadar dosya sağlayıcıya iletilemiyor, ancak bildirim süresi işlemeye devam ediyor.</div>` : ''}
-    <a class="btn btn-success" href="destek-taleplerim.html?created=${state.submitted.id}">${icon('arrow-left')}Talep Listesine Dön</a>
+    <a class="btn btn-success" href="index.html?created=${state.submitted.id}">${icon('arrow-left')}Talep Listesine Dön</a>
   </div></section>`;
 
 /* ---------------- Sağ sütun ---------------- */

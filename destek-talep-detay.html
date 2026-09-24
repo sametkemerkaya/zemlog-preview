@@ -111,12 +111,12 @@
           <nav class="crumbs" aria-label="breadcrumb">
             <a href="#"><i data-icon="house"></i>Anasayfa</a>
             <i data-icon="chevron-right" class="sep"></i>
-            <a href="destek-taleplerim.html">Destek Taleplerim</a>
+            <a href="index.html">Destek Taleplerim</a>
             <i data-icon="chevron-right" class="sep"></i>
             <b id="crumbId">#DT-…</b>
           </nav>
         </div>
-        <a class="btn btn-secondary" href="destek-taleplerim.html"><i data-icon="arrow-left"></i>Listeye Dön</a>
+        <a class="btn btn-secondary" href="index.html"><i data-icon="arrow-left"></i>Listeye Dön</a>
       </div>
 
       <div class="detail" id="detail"></div>
@@ -194,7 +194,7 @@ const render = () => {
   if (!t) {
     $('#pageTitle').textContent = 'Talep bulunamadı';
     $('#crumbId').textContent = id ? `#DT-${id}` : '#DT-…';
-    root.innerHTML = `<section class="card notfound" style="grid-column:1/-1">${icon('inbox')}<h4>Talep bulunamadı</h4><p>Bu numaraya ait bir talep yok. <a href="destek-taleplerim.html" style="color:var(--primary-500)">Listeye dönün</a>.</p></section>`;
+    root.innerHTML = `<section class="card notfound" style="grid-column:1/-1">${icon('inbox')}<h4>Talep bulunamadı</h4><p>Bu numaraya ait bir talep yok. <a href="index.html" style="color:var(--primary-500)">Listeye dönün</a>.</p></section>`;
     return;
   }
   document.title = `${ticketNo(t)} · ${t.subject} · Zemlog`;

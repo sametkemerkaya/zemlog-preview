@@ -310,7 +310,7 @@ const NAV = [
   { key: 'import', label: 'Tek Nokta İthalat', icon: 'package', href: '#' },
   { key: 'invoices', label: 'Faturalar', icon: 'invoice', href: '#' },
   { section: 'Destek & Talep' },
-  { key: 'support', label: 'Destek Taleplerim', icon: 'life-buoy', href: 'destek-taleplerim.html', badge: true },
+  { key: 'support', label: 'Destek Taleplerim', icon: 'life-buoy', href: 'index.html', badge: true },
   { section: 'Diğer' },
   { key: 'org', label: 'Organizasyon Ayarları', icon: 'settings', open: true, children: [
     { key: 'org-org', label: 'Organizasyon', href: '#' },
@@ -337,7 +337,7 @@ const renderShell = (active = 'support') => {
   const sidebar = $('#sidebar');
   sidebar.innerHTML = `
     <div class="sb-head">
-      <a href="destek-taleplerim.html" class="logo" aria-label="Zemlog">${LOGO}</a>
+      <a href="index.html" class="logo" aria-label="Zemlog">${LOGO}</a>
       <button class="sb-toggle" id="sbToggle" type="button" title="Menüyü daralt" aria-label="Menüyü daralt">${icon('panel-left')}</button>
     </div>
     <nav class="nav">${NAV.map(i => navItemHtml(i, active)).join('')}</nav>`;
@@ -402,7 +402,7 @@ const openPanelHtml = (limit = 5) => {
       <span class="age">${ageText(t)}</span>
     </a>`;
   }).join('');
-  return `<h3>Açık Talepleriniz</h3>${items || '<div class="none">Açık talebiniz bulunmuyor.</div>'}${list.length > shown.length ? `<a class="more" href="destek-taleplerim.html">Tüm açık talepler (${list.length})</a>` : ''}`;
+  return `<h3>Açık Talepleriniz</h3>${items || '<div class="none">Açık talebiniz bulunmuyor.</div>'}${list.length > shown.length ? `<a class="more" href="index.html">Tüm açık talepler (${list.length})</a>` : ''}`;
 };
 
 window.Proto = {

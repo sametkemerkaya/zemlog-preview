@@ -54,7 +54,7 @@
           <h1 class="page-title">Size nasıl yardımcı olabiliriz?</h1>
           <p class="page-sub">Öncelikle konuyu seçin, gerekli bilgileri adım adım birlikte tamamlayalım.</p>
         </div>
-        <a class="btn btn-secondary" href="destek-taleplerim.html"><i data-icon="arrow-left"></i>Talep Listesine Dön</a>
+        <a class="btn btn-secondary" href="index.html"><i data-icon="arrow-left"></i>Talep Listesine Dön</a>
       </div>
 
       <div class="create">
@@ -167,7 +167,7 @@ const submit = () => {
   const ship = t.ref ? matchShipment() : null;
   const ref = t.ref ? ($('#fRef').value.trim() || null) : null;
   const created = P.createTicket({ cat: t.cat, subject, ref: ship ? ship.id : ref, text, files: pendingFiles.map(name => ({ name })), shipment: ship ? JSON.parse(JSON.stringify(ship)) : null });
-  location.href = `destek-taleplerim.html?created=${created.id}`;
+  location.href = `index.html?created=${created.id}`;
 };
 
 /* ---------------- Açık talepler paneli (ortak) ---------------- */

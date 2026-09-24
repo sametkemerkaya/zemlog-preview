@@ -65,7 +65,7 @@
           <h1 class="page-title" id="pTitle"></h1>
           <p class="page-sub" id="pSub"></p>
         </div>
-        <a class="btn btn-secondary" href="destek-taleplerim.html"><i data-icon="arrow-left"></i>Talep Listesine Dön</a>
+        <a class="btn btn-secondary" href="index.html"><i data-icon="arrow-left"></i>Talep Listesine Dön</a>
       </div>
       <div class="wiz">
         <section class="card" id="left"></section>
@@ -120,7 +120,7 @@ const render = () => {
     <div class="success-wrap"><div class="success">
       <div class="ok-title"><span class="ok-ico">${icon('check')}</span>Talebiniz alındı</div>
       <p>Talep numaranız #DT-${created}. İlgili ekibimiz talebinizi inceleyip en kısa sürede dönüş yapacak.</p>
-      <a class="btn btn-success" href="destek-taleplerim.html?created=${created}">${icon('arrow-left')}Talep Listesine Dön</a>
+      <a class="btn btn-success" href="index.html?created=${created}">${icon('arrow-left')}Talep Listesine Dön</a>
     </div></div>` : `<div class="steps">${s1()}${s2()}</div>`;
   $('#openPanel').innerHTML = P.openPanelHtml();
 };
