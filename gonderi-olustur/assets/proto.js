@@ -49,6 +49,11 @@ const ICONS = {
   'help-circle': '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
   'arrow-right': '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
   clock: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  'map-pin': '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+  'trash-2': '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>',
+  'file-up': '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M12 12v6"/><path d="m15 15-3-3-3 3"/>',
+  printer: '<path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/>',
+  'file-spreadsheet': '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M8 13h2"/><path d="M14 13h2"/><path d="M8 17h2"/><path d="M14 17h2"/>',
   circle: '<circle cx="12" cy="12" r="10"/>',
   upload: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>',
   'alert-circle': '<circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/>',
@@ -306,11 +311,11 @@ const createTicket = ({ cat = 'other', subject, ref = null, text = '', files = [
 const NAV = [
   { key: 'dashboard', label: 'Gösterge Paneli', icon: 'layout-dashboard', href: '#' },
   { section: 'Operasyon' },
-  { key: 'shipments', label: 'Gönderiler', icon: 'truck', href: '#' },
+  { key: 'shipments', label: 'Gönderiler', icon: 'truck', href: 'index.html' },
   { key: 'import', label: 'Tek Nokta İthalat', icon: 'package', href: '#' },
   { key: 'invoices', label: 'Faturalar', icon: 'invoice', href: '#' },
   { section: 'Destek & Talep' },
-  { key: 'support', label: 'Destek Taleplerim', icon: 'life-buoy', href: 'index.html', badge: true },
+  { key: 'support', label: 'Destek Taleplerim', icon: 'life-buoy', href: '../destek-talepleri/index.html', badge: true },
   { section: 'Diğer' },
   { key: 'org', label: 'Organizasyon Ayarları', icon: 'settings', open: true, children: [
     { key: 'org-org', label: 'Organizasyon', href: '#' },
@@ -396,13 +401,13 @@ const openPanelHtml = (limit = 5) => {
     const title = (t.shipment && t.shipment.tracking) || t.ref || t.subject;
     const awaiting = t.status === 'awaiting';
     const sub = awaiting ? `Müşteri bekleniyor${t.needs ? ' · ' + esc(t.needs) : ''}` : (t.shipment ? 'UPS bekleniyor' : 'Temsilci inceliyor');
-    return `<a class="open-item ${awaiting ? 'awaiting' : ''}" href="destek-talep-detay.html?id=${t.id}" title="${ticketNo(t)} · ${esc(t.subject)}">
+    return `<a class="open-item ${awaiting ? 'awaiting' : ''}" href="../destek-talepleri/destek-talep-detay.html?id=${t.id}" title="${ticketNo(t)} · ${esc(t.subject)}">
       <span class="dot"></span>
       <span class="txt"><span class="ttl">${esc(title)}</span><span class="sub">${sub}</span></span>
       <span class="age">${ageText(t)}</span>
     </a>`;
   }).join('');
-  return `<h3>Açık Talepleriniz</h3>${items || '<div class="none">Açık talebiniz bulunmuyor.</div>'}${list.length > shown.length ? `<a class="more" href="index.html">Tüm açık talepler (${list.length})</a>` : ''}`;
+  return `<h3>Açık Talepleriniz</h3>${items || '<div class="none">Açık talebiniz bulunmuyor.</div>'}${list.length > shown.length ? `<a class="more" href="../destek-talepleri/index.html">Tüm açık talepler (${list.length})</a>` : ''}`;
 };
 
 window.Proto = {

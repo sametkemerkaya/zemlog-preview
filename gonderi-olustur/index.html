@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<script>/* Klasör adresi "/" olmadan açılırsa göreli yollar bozulmasın */(function(){var p=location.pathname;if(location.protocol!=="file:"&&!/(/|.html?)$/.test(p))location.replace(p+"/"+location.search+location.hash);})();</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yeni Gönderi · Zemlog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/proto.css">
+<link rel="stylesheet" href="assets/gonderi.css">
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="header" id="header"></header>
+
+    <main class="content">
+      <div class="page-head">
+        <div style="min-width:0">
+          <h1 class="page-title">Yeni Gönderi</h1>
+          <nav class="crumbs" aria-label="Sayfa yolu">
+            <a href="#"><i data-icon="house"></i>Anasayfa</a><i data-icon="chevron-right" class="sep"></i>
+            <a href="#">Gönderi</a><i data-icon="chevron-right" class="sep"></i>
+            <b>Gönderi Listesi</b>
+          </nav>
+        </div>
+        <button type="button" class="btn btn-success" data-submit><i data-icon="plus"></i>Gönderiyi Oluştur</button>
+      </div>
+
+      <div class="modes" id="modes" role="tablist">
+        <button type="button" class="mode active" data-mode="paket" role="tab"><b>Paket Gönderimi</b><i>Kutu içinde eşya</i></button>
+        <button type="button" class="mode" data-mode="toplu" role="tab"><b>Toplu Gönderi</b><i>CSV ile birden fazla gönderi oluşturun</i></button>
+      </div>
+
+      <div id="flow">
+        <section class="card step" id="s1"></section>
+        <section class="card step" id="s2"></section>
+        <section class="card step" id="s3"></section>
+      </div>
+
+      <section class="card bulk" id="bulk" hidden></section>
+      <section id="done" hidden></section>
+    </main>
+
+    <div class="ship-bar" id="bar">
+      <div class="price-panel" id="pricePanel" hidden></div>
+      <div class="bar-inner">
+        <div class="bar-left">
+          <div class="bar-route" id="barRoute"></div>
+          <div class="bar-sub" id="barSub"></div>
+        </div>
+        <div class="bar-right">
+          <div class="bar-price">
+            <b class="mono" id="barPrice">—</b>
+            <span class="bar-note" id="barNote">Servisi seçince netleşir</span>
+            <button type="button" class="bar-link" id="barDetails">Ücret Detayları</button>
+          </div>
+          <button type="button" class="btn btn-soft" id="draftBtn">Taslak Kaydet</button>
+          <button type="button" class="btn btn-success" data-submit>Gönderiyi Oluştur<i data-icon="arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Gönderici adresi ekle -->
+<div class="modal" id="mSender">
+  <div class="modal-box z" role="dialog" aria-labelledby="mSenderT">
+    <button type="button" class="xbtn mx" data-close aria-label="Kapat"><i data-icon="x"></i></button>
+    <div class="z-head"><h2 id="mSenderT">Gönderim Adresi Ekle</h2><p>Aşağıdaki formu eksiksiz doldurarak gönderim adresi ekleyebilirsiniz.</p></div>
+    <form class="z-body" id="fSender" novalidate>
+      <div class="grid-2">
+        <div class="field" data-f="ad"><label>Yetkili Adı</label><input class="input" name="ad" placeholder="Lütfen adınızı giriniz..."><div class="err-msg">Zorunlu alan.</div></div>
+        <div class="field" data-f="soyad"><label>Yetkili Soyadı</label><input class="input" name="soyad" placeholder="Lütfen soyadınızı giriniz..."><div class="err-msg">Zorunlu alan.</div></div>
+      </div>
+      <div class="field"><label>Şirket Adı</label><input class="input" name="sirket" placeholder="Lütfen şirketinizin adını giriniz..."></div>
+      <div class="grid-2">
+        <div class="field" data-f="tel"><label>Telefon Numarası</label><div class="tel"><span class="dial">+90</span><input class="input" name="tel" inputmode="tel" placeholder="5** *** ** **"></div><div class="err-msg">Geçerli bir telefon girin.</div></div>
+        <div class="field" data-f="eposta"><label>E - Posta Adresi</label><input class="input" name="eposta" type="email" placeholder="Lütfen e-posta adresi giriniz..."><div class="err-msg">Geçerli bir e-posta girin.</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="field" data-f="sehir"><label>Şehir</label><select class="select" name="sehir"></select><div class="err-msg">Şehir seçin.</div></div>
+        <div class="field" data-f="ilce"><label>İlçe</label><select class="select" name="ilce"></select><div class="err-msg">İlçe seçin.</div></div>
+      </div>
+      <div class="field" data-f="acik"><label>Açık Adres</label><input class="input" name="acik" placeholder="Örn. Mahalle, cadde, sokak ve bina bilgisi"><div class="err-msg">Zorunlu alan.</div></div>
+      <div class="field"><label>Adres Detayı</label><input class="input" name="detay" placeholder="Örn. Kat, daire, ofis vb."></div>
+      <div class="grid-2">
+        <div class="field" data-f="pk"><label>Posta Kodu</label><input class="input" name="pk" inputmode="numeric" placeholder="Lütfen posta kodu giriniz..."><div class="err-msg">Zorunlu alan.</div></div>
+        <div class="field"><label>Adresi Kaydet</label><label class="check"><input type="checkbox" name="kaydet" checked><span>Bu adresi, gönderici adresi olarak kaydet.</span></label></div>
+      </div>
+      <div class="field" data-f="baslik" id="senderTitleField"><label>Adres Başlığı</label><input class="input" name="baslik" placeholder="Örn. Merkez Ofis, Depo, Şube"><div class="err-msg">Kayıtlı adres için bir başlık girin.</div></div>
+    </form>
+    <div class="z-foot"><button type="button" class="btn btn-secondary" data-close>Vazgeç</button><button type="submit" form="fSender" class="btn btn-success">Adresi Kaydet</button></div>
+  </div>
+</div>
+
+<!-- Alıcı adresi manuel -->
+<div class="modal" id="mRecipient">
+  <div class="modal-box z" role="dialog" aria-labelledby="mRecT">
+    <button type="button" class="xbtn mx" data-close aria-label="Kapat"><i data-icon="x"></i></button>
+    <div class="z-head"><h2 id="mRecT">Alıcı Adresi Ekle</h2><p>Aşağıdaki formu eksiksiz doldurarak alıcı adresini ekleyebilirsiniz.</p></div>
+    <form class="z-body" id="fRecipient" novalidate>
+      <div id="recAddr"></div>
+      <label class="switch-row"><span class="switch"><input type="checkbox" id="billDiff"><i></i></span>Fatura adresi teslimat adresinden farklı</label>
+      <div id="billAddr" hidden><h3 class="z-sub">Fatura Adresi</h3></div>
+    </form>
+    <div class="z-foot"><button type="button" class="btn btn-secondary" data-close>Vazgeç</button><button type="submit" form="fRecipient" class="btn btn-success">Adresi Kaydet</button></div>
+  </div>
+</div>
+
+<!-- Servis fiyat detayı -->
+<div class="modal" id="mPrice">
+  <div class="modal-box z" role="dialog" aria-labelledby="mPriceT">
+    <button type="button" class="xbtn mx" data-close aria-label="Kapat"><i data-icon="x"></i></button>
+    <div class="z-head"><h2 id="mPriceT">Servis Fiyatı Detayları</h2><p>Aşağıdaki ilgili servisin detay ücretlerini inceleyebilirsiniz.</p></div>
+    <div class="z-body" id="priceBody"></div>
+    <div class="z-foot"><button type="button" class="btn btn-secondary" data-close>Kapat</button></div>
+  </div>
+</div>
+
+<script src="assets/proto.js"></script>
+<script src="assets/gonderi.js"></script>
+</body>
+</html>

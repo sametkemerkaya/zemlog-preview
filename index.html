@@ -3,259 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Destek Taleplerim · Zemlog</title>
+<title>Zemlog Prototipleri</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/proto.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* ---------- Liste sayfası ---------- */
-.list-card{display:flex;flex-direction:column;min-height:calc(100dvh - 214px)}
-.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px}
-.search{position:relative;width:380px;max-width:100%}
-.search input{width:100%;height:40px;border:1px solid var(--gray-200);border-radius:8px;padding:0 40px 0 14px;background:#fff;outline:none;font-size:13px;transition:border-color .15s,box-shadow .15s}
-.search input::placeholder{color:var(--placeholder)}
-.search input:focus{border-color:var(--primary-300);box-shadow:0 0 0 3px rgba(58,152,188,.16)}
-.search .ic{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);width:18px;height:18px;pointer-events:none}
-.dd{position:relative}
-.dd-menu{position:absolute;right:0;top:calc(100% + 6px);min-width:230px;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(47,43,61,.14);padding:6px;display:none;z-index:20}
-.dd.open .dd-menu{display:block}
-.dd-item{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:8px 10px;border-radius:6px;font-size:13px;color:var(--foreground);text-align:left}
-.dd-item:hover{background:var(--gray-100)}
-.dd-item.active{background:var(--primary-100);color:var(--primary-500);font-weight:500}
-.dd-count{font-size:11px;color:var(--muted);background:var(--gray-100);padding:1px 7px;border-radius:999px}
-.dd-item.active .dd-count{background:#fff}
-.dd .chev{width:16px;height:16px;transition:transform .2s}
-.dd.open .chev{transform:rotate(180deg)}
-.table{width:100%;border-collapse:collapse;table-layout:fixed}
-.table thead th{background:var(--gray-100);text-align:left;font-size:13px;font-weight:500;color:var(--heading);padding:11px 16px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);white-space:nowrap}
-.table tbody td{padding:14px 16px;border-bottom:1px solid var(--border);vertical-align:middle}
-.table tbody tr{transition:background .15s;cursor:pointer}
-.table tbody tr:hover{background:var(--gray-100)}
-.th-center,.td-center{text-align:center}
-.th-status{width:180px}
-.th-date{width:170px}
-.th-acts{width:96px}
-.row-top{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin-bottom:7px}
-.row-title{font-size:14px;font-weight:600;color:var(--heading);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.row-prev{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.row-prev b{font-weight:500;color:var(--foreground);margin-right:10px}
-.td-date{font-size:13px;color:var(--foreground);white-space:nowrap}
-.acts{display:flex;gap:8px;justify-content:center}
-.ibtn{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;transition:background .15s}
-.ibtn .ic{width:16px;height:16px}
-.ibtn-view{background:var(--primary-100);color:var(--primary-500)}
-.ibtn-view:hover{background:var(--primary-200)}
-.ibtn-close{background:var(--danger-100);color:var(--danger-500)}
-.ibtn-close:hover{background:var(--danger-200)}
-.ibtn:disabled{opacity:.4;cursor:not-allowed}
-.ibtn:disabled:hover{background:var(--danger-100)}
-.empty{padding:72px 16px;text-align:center;color:var(--muted)}
-.empty .ic{width:40px;height:40px;color:var(--gray-400);margin-bottom:10px}
-.empty h4{margin:0 0 4px;font-size:15px;font-weight:600;color:var(--heading)}
-.empty p{margin:0;font-size:13px}
-.table tbody tr.empty-row{cursor:default}
-.table tbody tr.empty-row:hover{background:transparent}
-.card-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;font-size:13px;flex-wrap:wrap}
-.psize{display:flex;align-items:center;gap:26px;color:var(--heading)}
-.psize label{display:flex;align-items:center;gap:14px}
-.psize select{border:0;background:transparent;font-weight:500;font-size:13px;outline:none;cursor:pointer;color:var(--heading)}
-.pager{display:flex;gap:6px}
-.pg{min-width:28px;height:28px;padding:0 6px;border-radius:6px;background:var(--gray-100);display:grid;place-items:center;font-size:13px;color:var(--heading);transition:background .15s}
-.pg:hover{background:var(--gray-200)}
-.pg.active{background:var(--primary-500);color:#fff}
-.pg.active:hover{background:var(--primary-600)}
-.pg:disabled{opacity:.45;cursor:default}
-.pg:disabled:hover{background:var(--gray-100)}
-.pg .ic{width:16px;height:16px}
-@media (max-width:767px){
-  .toolbar{flex-direction:column;align-items:stretch}
-  .search{width:100%}
-  .dd{align-self:flex-end}
-  .th-date,.td-date{display:none}
-  .th-status{width:138px}
-  .th-acts{width:80px}
-  .table thead th,.table tbody td{padding-left:10px;padding-right:10px}
-  .pill{font-size:12px;padding:0 9px;height:24px}
-  .acts{gap:6px}
-  .list-card{min-height:0}
-}
+*{box-sizing:border-box}
+body{margin:0;min-height:100dvh;display:grid;place-items:center;padding:24px 16px;font-family:'Inter',system-ui,sans-serif;background:#f9f9f9;color:#3c3c3e}
+main{width:100%;max-width:720px}
+h1{margin:0 0 6px;font-size:22px;font-weight:600;color:#0b0809}
+p{margin:0 0 24px;font-size:14px;color:#71717b}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+a{display:block;padding:22px 24px;background:#fff;border:1px solid #e1e3e6;border-radius:10px;text-decoration:none;color:inherit;transition:border-color .15s,background .15s}
+a:hover{border-color:#69b1cd;background:#f1f8fb}
+a b{display:block;font-size:15px;font-weight:600;color:#0b0809}
+a span{display:block;margin-top:6px;font-size:13px;color:#71717b;line-height:1.45}
+@media (max-width:560px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="app" id="app">
-  <aside class="sidebar" id="sidebar"></aside>
-  <div class="main">
-    <header class="header" id="header"></header>
-
-    <main class="content">
-      <div class="page-head">
-        <div>
-          <h1 class="page-title">Destek Taleplerim</h1>
-          <nav class="crumbs" aria-label="breadcrumb">
-            <a href="#"><i data-icon="house"></i>Anasayfa</a>
-            <i data-icon="chevron-right" class="sep"></i>
-            <span>Destek Taleplerim</span>
-          </nav>
-        </div>
-        <a class="btn btn-primary" href="destek-talep-olustur.html"><i data-icon="plus"></i>Yeni Talep Oluştur</a>
-      </div>
-
-      <section class="card list-card">
-        <div class="toolbar">
-          <div class="search">
-            <input type="search" id="searchInput" placeholder="Talep no, konu veya sipariş ID ile arayın..." autocomplete="off">
-            <i data-icon="search"></i>
-          </div>
-          <div class="dd" id="statusDd">
-            <button class="btn btn-light" type="button" id="statusBtn" aria-haspopup="listbox"><i data-icon="life-buoy"></i><span id="statusLabel">Tüm Talepler</span><i data-icon="chevron-down" class="chev"></i></button>
-            <div class="dd-menu" id="statusMenu" role="listbox"></div>
-          </div>
-        </div>
-
-        <table class="table" id="table">
-          <thead>
-            <tr>
-              <th>Talep</th>
-              <th class="th-status">Durum</th>
-              <th class="th-date">Son Güncelleme</th>
-              <th class="th-acts th-center">İşlem</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
-
-        <div class="card-foot">
-          <div class="psize">
-            <label>Sayfa Başına
-              <select id="pageSize">
-                <option value="10">10</option>
-                <option value="25" selected>25</option>
-                <option value="50">50</option>
-              </select>
-            </label>
-            <span id="total">Toplam 0 Kayıt</span>
-          </div>
-          <div class="pager" id="pager"></div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="site-foot">© 2026, <a href="#">Zemlog</a> Tüm hakları saklıdır.</footer>
+<main>
+  <h1>Zemlog Prototipleri</h1>
+  <p>Mock veriyle çalışan ekran prototipleri. Her biri kendi klasöründe bağımsız çalışır.</p>
+  <div class="grid">
+    <a href="destek-talepleri/index.html"><b>Destek Taleplerim</b><span>Talep listesi, detay, yeni talep ve gönderi sorunu akışları.</span></a>
+    <a href="gonderi-olustur/index.html"><b>Yeni Gönderi</b><span>Adres, paket, sağlayıcı, ticari fatura ve ek servis adımları.</span></a>
   </div>
-</div>
-
-<script src="assets/proto.js"></script>
-<script>
-(() => {
-'use strict';
-const P = window.Proto;
-const { $, esc, icon, CATS, STATUS, tickets, byId, lastMsg, previewText, ticketNo, fmtRel, lower, toast } = P;
-P.renderShell('support');
-
-const DETAIL = id => `destek-talep-detay.html?id=${id}`;
-const state = { q: '', status: 'all', page: 1, pageSize: 25 };
-
-const sorted = () => [...tickets].sort((a, b) => b.updatedAt - a.updatedAt);
-const filtered = () => {
-  const q = lower(state.q.trim()).replace(/^#/, '');
-  return sorted().filter(t =>
-    (state.status === 'all' || t.status === state.status) &&
-    (!q || lower(`dt-${t.id}`).includes(q) || lower(t.subject).includes(q) || (t.ref && lower(t.ref).includes(q)))
-  );
-};
-
-/* ---------------- List ---------------- */
-const tbody = $('#tbody');
-const pillHtml = s => `<span class="pill pill-${s}">${STATUS[s]}</span>`;
-const rowHtml = t => {
-  const m = lastMsg(t);
-  const who = m.from === 'agent' ? 'Temsilci' : 'Siz';
-  const title = `${esc(t.subject)}${t.ref ? ' — ' + esc(t.ref) : ''}`;
-  return `<tr data-id="${t.id}">
-    <td>
-      <div class="row-top"><span class="chip">${esc(CATS[t.cat] || t.cat)}</span><span class="tid">${ticketNo(t)}</span></div>
-      <div class="row-title" title="${title}">${title}</div>
-      <div class="row-prev"><b>${who} :</b>${esc(previewText(m))}</div>
-    </td>
-    <td>${pillHtml(t.status)}</td>
-    <td class="td-date">${fmtRel(t.updatedAt)}</td>
-    <td class="td-center">
-      <div class="acts">
-        <a class="ibtn ibtn-view" href="${DETAIL(t.id)}" title="Detayı görüntüle" aria-label="Detayı görüntüle">${icon('eye')}</a>
-        <button class="ibtn ibtn-close" type="button" data-close="${t.id}" title="${t.status === 'closed' ? 'Talep kapatıldı' : 'Talebi kapat'}" aria-label="Talebi kapat" ${t.status === 'closed' ? 'disabled' : ''}>${icon('ban')}</button>
-      </div>
-    </td>
-  </tr>`;
-};
-const emptyHtml = () => `<tr class="empty-row"><td colspan="4"><div class="empty">${icon('inbox')}<h4>Talep bulunamadı</h4><p>${state.q ? 'Arama kriterlerinize uyan bir talep yok.' : 'Bu durumda bir talebiniz bulunmuyor.'}</p></div></td></tr>`;
-
-const renderPager = pages => {
-  const p = state.page;
-  const start = Math.max(1, Math.min(p - 2, pages - 4));
-  const end = Math.min(pages, start + 4);
-  let html = `<button class="pg" type="button" data-page="${p - 1}" ${p === 1 ? 'disabled' : ''} aria-label="Önceki sayfa">${icon('chevron-left')}</button>`;
-  for (let i = start; i <= end; i++) html += `<button class="pg ${i === p ? 'active' : ''}" type="button" data-page="${i}">${i}</button>`;
-  html += `<button class="pg" type="button" data-page="${p + 1}" ${p === pages ? 'disabled' : ''} aria-label="Sonraki sayfa">${icon('chevron-right')}</button>`;
-  $('#pager').innerHTML = html;
-};
-
-const renderStatusMenu = () => {
-  const counts = { all: tickets.length, open: 0, awaiting: 0, closed: 0 };
-  tickets.forEach(t => counts[t.status]++);
-  const items = [['all', 'Tüm Talepler'], ['open', STATUS.open], ['awaiting', STATUS.awaiting], ['closed', STATUS.closed]];
-  $('#statusMenu').innerHTML = items.map(([k, label]) =>
-    `<button type="button" role="option" class="dd-item ${state.status === k ? 'active' : ''}" data-status="${k}"><span>${label}</span><span class="dd-count">${counts[k]}</span></button>`).join('');
-  $('#statusLabel').textContent = items.find(([k]) => k === state.status)[1];
-  P.refreshBadge();
-};
-
-const render = () => {
-  const list = filtered();
-  const pages = Math.max(1, Math.ceil(list.length / state.pageSize));
-  if (state.page > pages) state.page = pages;
-  const slice = list.slice((state.page - 1) * state.pageSize, state.page * state.pageSize);
-  tbody.innerHTML = slice.length ? slice.map(rowHtml).join('') : emptyHtml();
-  $('#total').textContent = `Toplam ${list.length} Kayıt`;
-  renderPager(pages);
-  renderStatusMenu();
-};
-
-/* ---------------- Events ---------------- */
-tbody.addEventListener('click', e => {
-  const close = e.target.closest('[data-close]');
-  if (close) { e.stopPropagation(); if (!close.disabled) P.closeTicket(+close.dataset.close, render); return; }
-  if (e.target.closest('a')) return;
-  const tr = e.target.closest('tr[data-id]');
-  if (tr) location.href = DETAIL(tr.dataset.id);
-});
-$('#pager').addEventListener('click', e => { const b = e.target.closest('[data-page]'); if (b && !b.disabled) { state.page = +b.dataset.page; render(); } });
-$('#pageSize').addEventListener('change', e => { state.pageSize = +e.target.value; state.page = 1; render(); });
-$('#searchInput').addEventListener('input', e => { state.q = e.target.value; state.page = 1; render(); });
-
-const dd = $('#statusDd');
-$('#statusBtn').addEventListener('click', () => dd.classList.toggle('open'));
-$('#statusMenu').addEventListener('click', e => { const b = e.target.closest('[data-status]'); if (!b) return; state.status = b.dataset.status; state.page = 1; dd.classList.remove('open'); render(); });
-document.addEventListener('click', e => { if (!dd.contains(e.target)) dd.classList.remove('open'); });
-
-document.addEventListener('keydown', e => { if (e.key === 'Escape') dd.classList.remove('open'); });
-
-/* yeni oluşturulan talep için "hoş geldin" bildirimi (oluşturma sayfasından dönüşte) */
-const created = new URLSearchParams(location.search).get('created');
-if (created && byId(+created)) { toast(`#DT-${created} numaralı talebiniz oluşturuldu.`); history.replaceState(null, '', location.pathname); }
-
-/* dakikada bir göreli zamanları tazele */
-setInterval(() => { if (!document.hidden) render(); }, 60e3);
-
-P.hydrateIcons();
-render();
-
-/* deep link: #DT-1042 → detay sayfası, #yeni → oluşturma sayfası */
-const h = decodeURIComponent(location.hash.slice(1)).toLowerCase();
-const m = h.match(/^dt-(\d+)$/);
-if (m && byId(+m[1])) location.replace(DETAIL(+m[1]));
-else if (h === 'yeni') location.replace('destek-talep-olustur.html');
-})();
-</script>
+</main>
 </body>
 </html>
